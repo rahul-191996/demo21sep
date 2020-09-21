@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="b9ac9d17-765a-488f-8215-98a1fd34dc77" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="64be2bc3-f1b4-45b2-98bc-9a7f4f93af26" >
+		<db:my-sql-connection host="db4free.net" port="3306" user="rahul1996" password="godisgreat@123" database="rahulapisero" />
+	</db:config>
+	<flow name="demo-projectFlow" doc:id="e959e6fa-8ddf-4705-82aa-3b5eb92bab5c" >
+		<http:listener doc:name="Listener" doc:id="cb88a5cd-a825-42c0-ab89-99cce650618b" config-ref="HTTP_Listener_config" path="/demo"/>
+		<db:select doc:name="Select" doc:id="ca072786-cf19-4fdf-be01-9a21f5ef7bdd" config-ref="Database_Config">
+			<db:sql >select * from customer</db:sql>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="e2470161-6ae5-45fe-9951-4c958420f9d2" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="ee4a9879-0782-42e9-b310-51f12469a4d3" message="#[payload]"/>
+	</flow>
+</mule>
